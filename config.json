@@ -1,0 +1,22 @@
+{
+  "pools": [
+    {
+      "algo": null,
+      "coin": null,
+      "url": "xmr.2miners.com:12222",
+      "user": "8BLFv7d1oXLWassvbCy7FEZKPDS2RTeUDYWCWWX9bJW1AxsnLsNpbdqP7iSusqectQAKMi4KEJ5LB4rgbfuF48ep6wR3cx4",
+      "pass": "x",
+      "rig-id": "docker",
+      "nicehash": false,
+      "keepalive": true,
+      "enabled": true,
+      "tls": true,
+      "tls-fingerprint": null,
+      "daemon": false,
+      "socks5": null,
+      "self-select": null,
+      "submit-to-origin": false
+    }
+  ],
+  "colors": false
+}
