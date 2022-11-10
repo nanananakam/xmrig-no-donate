@@ -1,0 +1,68 @@
+version: 2.1
+jobs:
+  build_x86_64:
+    machine:
+      image: ubuntu-2004:current
+    resource_class: medium
+    steps:
+      - checkout
+      - run:
+          name: Docker Login
+          command: docker login -u nanananakam -p ${DOCKER_PASSWORD}
+      - run:
+          name: Docker Build
+          command: docker build -t nanananakam/xmrig-no-donate:x86_64 .
+      - run:
+          name: Docker Push
+          command: docker push nanananakam/xmrig-no-donate:x86_64
+  build_aarch64:
+    machine:
+      image: ubuntu-2004:current
+    resource_class: arm.medium
+    steps:
+      - checkout
+      - run:
+          name: Docker Login
+          command: docker login -u nanananakam -p ${DOCKER_PASSWORD}
+      - run:
+          name: Docker Build
+          command: docker build -t nanananakam/xmrig-no-donate:aarch64 .
+      - run:
+          name: Docker Push
+          command: docker push nanananakam/xmrig-no-donate:aarch64
+      - run:
+          name: Prepare Oracle Cloud Docker Registry
+          command: |
+            mkdir -p ~/.docker
+            echo ${DOCKER_CONFIG_JSON} > ~/.docker/config.json
+            chmod 600 ~/.docker/config.json
+      - run:
+          name: Docker Push To Oracle Cloud
+          command: |
+            docker tag nanananakam/xmrig-no-donate:aarch64 kix.ocir.io/ax0w66dqmxlm/xmrig-no-donate
+            docker push kix.ocir.io/ax0w66dqmxlm/xmrig-no-donate
+  push_manifest:
+    machine:
+      image: ubuntu-2004:current
+    resource_class: medium
+    steps:
+      - run:
+          name: Docker Login
+          command: docker login -u nanananakam -p ${DOCKER_PASSWORD}
+      - run:
+          name: Create Manifest
+          command: docker manifest create nanananakam/xmrig-no-donate:latest --amend nanananakam/xmrig-no-donate:x86_64 --amend nanananakam/xmrig-no-donate:aarch64
+      - run:
+          name: Push Manifest
+          command: docker manifest push --purge nanananakam/xmrig-no-donate:latest
+
+workflows:
+  version: 2
+  workflow:
+    jobs:
+      - build_x86_64
+      - build_aarch64
+      - push_manifest:
+          requires:
+            - build_x86_64
+            - build_aarch64
