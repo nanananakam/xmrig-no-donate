@@ -10,7 +10,7 @@ RUN apk add git make cmake libstdc++ gcc g++ automake libtool autoconf linux-hea
 
 FROM alpine
 
-COPY --from=0 /xmrig/build/xmrig /
-COPY config.json /
+COPY --from=0 /xmrig/build/xmrig /opt/xmrig/
+COPY config.json /opt/xmrig/
 
-ENTRYPOINT ["/xmrig"]
+ENTRYPOINT ["/opt/xmrig/xmrig"]
